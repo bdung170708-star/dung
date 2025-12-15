@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Merry Christmas 🎄</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at top, #0b1d3a, #000);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 48px;
+      text-shadow: 0 0 15px red;
+    }
+
+    .tree {
+      position: fixed;
+      bottom: 120px;  /* Dịch lên trên để không che mất chữ */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 160px solid transparent; /* Làm cây thông lớn hơn */
+      border-right: 160px solid transparent;
+      border-bottom: 250px solid #0f0; /* Cây thông to hơn */
+      z-index: 10;
+    }
+
+    .tree::before {
+      content: "";
+      position: absolute;
+      top: 100px;  /* Điều chỉnh cho phù hợp */
+      left: -120px;
+      width: 0;
+      height: 0;
+      border-left: 120px solid transparent;
+      border-right: 120px solid transparent;
+      border-bottom: 180px solid #0c0;
+    }
+
+    .tree::after {
+      content: "";
+      position: absolute;
+      top: 160px; /* Điều chỉnh cho phù hợp */
+      left: -80px;
+      width: 0;
+      height: 0;
+      border-left: 80px solid transparent;
+      border-right: 80px solid transparent;
+      border-bottom: 120px solid #090;
+    }
+
+    .trunk {
+      position: fixed;
+      bottom: 50px; /* Đảm bảo phần gốc cây không bị che khuất */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 80px;
+      background: #6b3e1e;
+      z-index: 5;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    p {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🎄 Merry Christmas 🎄</h1>
+
+<div class="tree"></div>
+<div class="trunk"></div>
+
+<p>👉 Click chuột để bắn pháo hoa 🎆</p>
+
+<canvas id="fireworks"></canvas>
+
+<script>
+  const canvas = document.getElementById("fireworks");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  window.onresize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
+
+  class Particle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.speed = Math.random() * 6 + 2;
+      this.angle = Math.random() * Math.PI * 2;
+      this.life = 100;
+      this.color = `hsl(${Math.random() * 360}, 100%, 60%)`;
+    }
+
+    update() {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      this.life--;
+    }
+
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    }
+  }
+
+  let particles = [];
+
+  function explode(x, y) {
+    for (let i = 0; i < 100; i++) {
+      particles.push(new Particle(x, y));
+    }
+  }
+
+  canvas.addEventListener("click", (e) => {
+    explode(e.clientX, e.clientY);
+  });
+
+  function animate() {
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+</script>
+
+</body>
+</html>
